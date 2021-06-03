@@ -1,0 +1,128 @@
+#!/bin/tcsh
+# ----------------------------------------------------------------
+# AMLDiag using JADAMILU, roemer's makeandersonmatrix()
+# serial version for SGI ALTIX 
+# ----------------------------------------------------------------
+#PBS -l ncpus=1,walltime=00:30:00,mem=100MB
+#PBS -m bea
+#PBS -M l.j.a.vasquez@warwick.ac.uk
+#PBS -V
+#PBS -r y
+#PBS -j oe
+
+##PBS -k oe
+
+echo $HOME
+
+# ----------------------------------------------------------------
+# set jobname
+echo set jobname
+
+set jobname = "AMLdiag-WWIDTH-EENERGY-DDISORDER_I$PBS_ARRAY_INDEX"
+
+echo $jobname
+
+# set filenames according to OS
+echo set filenames
+
+set inpfile  = AMLdiag.inp
+
+# set directories
+echo set directories
+
+set TMP  = "$HOME/RUNS/$jobname"
+set SRC  = "$HOME/AML/src"
+set DEST = "$HOME/AML/skua_DATA/$jobname"
+set EXECSRC = "$HOME/AML/src"
+
+# make the temporary directory in which the run will store its
+# preliminary results and also the destination directory into which
+# the final results will be moved
+mkdir $TMP
+mkdir $DEST
+
+# ----------------------------------------------------------------
+# executable
+# ----------------------------------------------------------------
+set execfile = AMLdiag.IC
+
+# copy the executable into the TMP directory
+cd $TMP
+echo copy the executable into the TMP directory $TMP
+unalias scp
+scp $EXECSRC/$execfile .
+
+# ----------------------------------------------------------------
+# running the program
+# ----------------------------------------------------------------
+
+# begin execution
+echo begin execution
+
+# create the input file
+echo create the input .inp file
+touch $inpfile
+
+
+echo "ISeed         = $PBS_ARRAY_INDEX "  >> $inpfile # 
+echo "NEVals        = 5                "  >> $inpfile # 
+echo "IBCFlag       = 1                "  >> $inpfile # 
+echo "IRNGFlag      = 0                "  >> $inpfile # 
+echo "IKeepFlag     = 0                "  >> $inpfile # 
+echo "IWriteFlag    = 2                "  >> $inpfile # 
+
+echo "Width0        = WIDTH            "  >> $inpfile # 
+echo "Width1        = WIDTH            "  >> $inpfile # 
+echo "dWidth        = 1                "  >> $inpfile # 
+echo "DiagDis0      = DISORDER         "  >> $inpfile # 
+echo "DiagDis1      = DISORDER         "  >> $inpfile # 
+echo "dDiagDis      = 1.0              "  >> $inpfile # 
+echo "Energy        = ENERGY           "  >> $inpfile # 
+
+
+cat $inpfile
+
+# start execution of main calculation
+
+./$execfile
+
+# ----------------------------------------------------------------
+# deleting tmp files & directories, archiving data
+# ----------------------------------------------------------------
+
+
+# compress the data in the TMP directory
+echo compress the data in the TMP directory
+gzip -vf9 *
+
+# save the data in the DEST directory
+echo save the data in the DEST directory
+
+unalias mv
+mv *.raw.gz $DEST
+mv *.in?.gz $DEST
+mv *.log.gz $DEST
+
+# delete all files leftover in the TMP directory and remove same
+echo delete all files leftover in the TMP directory and remove same
+unalias rm
+pwd
+rm -f *
+
+# remove the $TMP directory
+cd $TMP
+cd .. 
+rmdir $TMP
+
+# tar all files in the DEST directory for easy downloading
+cd $DEST
+tar -cvf $jobname.tar *
+
+# ----------------------------------------------------------------
+# end of AMLdiag script
+# ----------------------------------------------------------------
+
+exit 0
+
+
+

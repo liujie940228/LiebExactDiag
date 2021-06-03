@@ -1,0 +1,42 @@
+#!/bin/tcsh
+ 
+set SLAVE = AMLdiag-SLAVE
+
+foreach width ( 3 4 )
+#6 7 8 9 10 11 12 13 \
+
+foreach energy ( 0.0 )
+#3.0 6.0 1.0 2.0 4.0 5.0 7.0 8.0 \
+#-0.0 -3.0 -6.0 \
+#-1.0 -2.0 -4.0 -5.0 -7.0 -8.0 \
+
+
+foreach disorder ( 15.5 )
+#16.5 \
+
+
+#foreach seed (1 2 3 4 5) 
+
+  echo "using WIDTH" $width
+  echo "using ENERGY" $energy
+  echo "using DISORDER" $disorder
+#  echo "using SEED" $seed
+
+ 
+#  set script = AMLdiag-W$width-E$energy-D$disorder-S$seed.pbs
+  set script = AMLdiag-W$width-E$energy-D$disorder.pbs
+ 
+#  sed "s/WIDTH/$width/g" $SLAVE | sed "s/ENERGY/$energy/g" | sed "s/DISORDER/$disorder/g" | sed "s/SEED/$seed/g" > $script
+
+  sed "s/WIDTH/$width/g" $SLAVE | sed "s/ENERGY/$energy/g" | sed "s/DISORDER/$disorder/g" > $script
+
+ 
+  echo "submitting " $script
+  qsub -J 1-5 $script
+  qstat 
+  sleep 2
+ 
+#end
+end
+end           
+end
