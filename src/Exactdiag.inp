@@ -1,0 +1,15 @@
+ISeed          = 1234
+NSeed          = 1
+dm             = 3
+nu             = 1
+IBCFlag        = 1
+IRNGFlag       = 0
+IKeepFlag      = 0
+IWriteFlag     = 4
+Width0         = 2
+Width1         = 3
+dWidth         = 1
+DiagDis0       = 10.0
+DiagDis1       = 10.0
+dDiagDis       = 1.0
+RimDiagDis     = 0.0001

@@ -30,21 +30,23 @@ CC = gcc
 CCFLAGS = -O2
 
 LIBDIR = $(HOME)/f77/lib
-LIBFLAGS  = -L../lib/JADAMILU_AMD64_4_ifort/JADAMILU/lib -ljadamilu -lblas -llapack -lg2c
+#LIBFLAGS  = -L../lib/JADAMILU_AMD64_4_ifort/JADAMILU/lib -ljadamilu -lblas -llapack -lg2c
+LIBFLAGS  = -lblas -llapack
+
 #LIBFLAGS  = -llapack -lblas 
 
 PRINT1 = a2ps -g -o-
-PRINT2 = > AMLdiag.ps # | fleet -odouble
+PRINT2 = > Exactdiag.ps # | fleet -odouble
 
-AMLdiag.IC:    CommonModules.o AMLModules.o random.o main.o util.o inout.o etime.o makefile.IC
-	$(F90) $(F90FLAGS) -o AMLdiag.IC CommonModules.o AMLModules.o\
+Exactdiag.IC:    CommonModules.o ExactDiagModules.o random.o main.o util.o inout.o etime.o makefile.IC
+	$(F90) $(F90FLAGS) -o Exactdiag.IC CommonModules.o ExactDiagModules.o\
                 util.o main.o inout.o random.o etime.o $(LIBFLAGS)
 
 CommonModules.o:     CommonModules.f90
 	$(F90) $(F90FLAGS) -c CommonModules.f90
 
-AMLModules.o:     AMLModules.f90
-	$(F90) $(F90FLAGS) -c AMLModules.f90
+ExactDiagModules.o:     ExactDiagModules.f90
+	$(F90) $(F90FLAGS) -c ExactDiagModules.f90
 
 random.o:     random.f90
 	$(F90) $(F90FLAGS) -c random.f90
@@ -61,14 +63,14 @@ inout.o:     inout.f90
 etime.o:     etime.f90
 	$(F90) $(F90FLAGS) -c etime.f90
 
-tar:	AMLdiag.tar	
-AMLdiag.tar:   makefile.* main.f90 util.f90 inout.f90 \
-                random.f90 AMLdiag.inp
-	tar -cvf AMLdiag.tar makefile.* main.f90 util.f90 \
-                inout.f90 random.f90 AMLdiag.inp
+tar:	Exactdiag.tar	
+Exactdiag.tar:   makefile.* main.f90 util.f90 inout.f90 \
+                random.f90 Exactdiag.inp
+	tar -cvf Exactdiag.tar makefile.* main.f90 util.f90 \
+                inout.f90 random.f90 Exactdiag.inp
 
 print:  
-	$(PRINT1) AMLdiag.inp main.f90 util.f90 inout.f90 random.f90 $(PRINT2)
+	$(PRINT1) Exactdiag.inp main.f90 util.f90 inout.f90 random.f90 $(PRINT2)
 
 clean:
 	rm -f core *.mod *.o
