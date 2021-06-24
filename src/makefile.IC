@@ -30,27 +30,29 @@ CC = gcc
 CCFLAGS = -O2
 
 LIBDIR = $(HOME)/f77/lib
-LIBFLAGS  = -L../lib/JADAMILU_AMD64_4_ifort/JADAMILU/lib -ljadamilu -lblas -llapack -lg2c
+#LIBFLAGS  = -L../lib/JADAMILU_AMD64_4_ifort/JADAMILU/lib -ljadamilu -lblas -llapack -lg2c
+LIBFLAGS  = -lblas -llapack
+
 #LIBFLAGS  = -llapack -lblas 
 
 PRINT1 = a2ps -g -o-
-PRINT2 = > AMLdiag.ps # | fleet -odouble
+PRINT2 = > Exactdiag.ps # | fleet -odouble
 
-AMLdiag.IC:    CommonModules.o AMLModules.o random.o main.o util.o inout.o etime.o makefile.IC
-	$(F90) $(F90FLAGS) -o AMLdiag.IC CommonModules.o AMLModules.o\
-                util.o main.o inout.o random.o etime.o $(LIBFLAGS)
+LiebExactdiag.IC:    CommonModules.o LEDModules.o random.o main_LED.o util.o inout.o etime.o makefile.IC
+	$(F90) $(F90FLAGS) -o LiebExactdiag.IC CommonModules.o LEDModules.o\
+                util.o main_LED.o inout.o random.o etime.o $(LIBFLAGS)
 
 CommonModules.o:     CommonModules.f90
 	$(F90) $(F90FLAGS) -c CommonModules.f90
 
-AMLModules.o:     AMLModules.f90
-	$(F90) $(F90FLAGS) -c AMLModules.f90
+LEDModules.o:     LEDModules.f90
+	$(F90) $(F90FLAGS) -c LEDModules.f90
 
 random.o:     random.f90
 	$(F90) $(F90FLAGS) -c random.f90
 
-main.o:     main.f90
-	$(F90) $(F90FLAGS) -c main.f90
+main_LED.o:     main_LED.f90
+	$(F90) $(F90FLAGS) -c main_LED.f90
 
 util.o:     util.f90
 	$(F90) $(F90FLAGS) -c util.f90
@@ -61,14 +63,14 @@ inout.o:     inout.f90
 etime.o:     etime.f90
 	$(F90) $(F90FLAGS) -c etime.f90
 
-tar:	AMLdiag.tar	
-AMLdiag.tar:   makefile.* main.f90 util.f90 inout.f90 \
-                random.f90 AMLdiag.inp
-	tar -cvf AMLdiag.tar makefile.* main.f90 util.f90 \
-                inout.f90 random.f90 AMLdiag.inp
+tar:	Exactdiag.tar	
+Exactdiag.tar:   makefile.* main_LED.f90 util.f90 inout.f90 \
+                random.f90 LiebExactdiag.inp
+	tar -cvf Exactdiag.tar makefile.* main_LED.f90 util.f90 \
+                inout.f90 random.f90 LiebExactdiag.inp
 
 print:  
-	$(PRINT1) AMLdiag.inp main.f90 util.f90 inout.f90 random.f90 $(PRINT2)
+	$(PRINT1) LiebExactdiag.inp main_LED.f90 util.f90 inout.f90 random.f90 $(PRINT2)
 
 clean:
 	rm -f core *.mod *.o
