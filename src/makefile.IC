@@ -30,13 +30,10 @@ CC = gcc
 CCFLAGS = -O2
 
 LIBDIR = $(HOME)/f77/lib
-#LIBFLAGS  = -L../lib/JADAMILU_AMD64_4_ifort/JADAMILU/lib -ljadamilu -lblas -llapack -lg2c
-LIBFLAGS  = -lblas -llapack
-
-#LIBFLAGS  = -llapack -lblas 
+LIBFLAGS = -L$(MKLROOT)/2023.2.0/lib/intel64 -lmkl_intel_lp64 -lmkl_sequential -lmkl_core -lpthread -lm -ldl
 
 PRINT1 = a2ps -g -o-
-PRINT2 = > Exactdiag.ps # | fleet -odouble
+PRINT2 = > AMLdiag.ps # | fleet -odouble
 
 Exactdiag.IC:    CommonModules.o ExactDiagModules.o random.o main.o util.o inout.o etime.o makefile.IC
 	$(F90) $(F90FLAGS) -o Exactdiag.IC CommonModules.o ExactDiagModules.o\
